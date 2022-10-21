@@ -35,7 +35,7 @@ def inserirUsuario ():
                                       database="postgres")
 
         cursor = connection.cursor()
-        comando = """ Insert into listadeespera (cpf_espera, nome, rua, numero, cep, cidade, estado, telefone) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        comando = """ Insert into cliente (cpf_espera, nome, rua, numero, cep, cidade, estado, telefone) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
         cpf = int(input(print("Digite o cpf: ")))
         nome = input(print("Digite o nome: "))
         rua = input(print("Digite a rua: "))
@@ -51,7 +51,7 @@ def inserirUsuario ():
     except (Exception, psycopg2.Error) as error:
         print("Erro ao inserir usuário ", error)
 
-
+2
 
 #ver clientes da fila de espera
 def verFila():
