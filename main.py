@@ -22,12 +22,12 @@ import psycopg2
 #Menu do sistema
 def menu():
     print(" --- SEJA BEM VINDO AO SISTEMA MORELIFE ---")
-    print("Digite oque fazer:  \n1 - Cadastrar novo cliente\n2 - Consultar cliente na lista de espera\n3 - Excluir cliente ")
+    print("Digite oque fazer:  \n1 - Cadastrar novo cliente\n2 - Consultar clientes da lista de espera\n3 - Excluir cliente ")
 
 
 
 #inserção de um novo usuário
-def inserirUsuario ():
+def inserirUsuario (cpf, nome, rua, numero, cep, cidade, estado, telefone,):
     try:
         connection = psycopg2.connect(user="postgres",
                                       password="postgres",
@@ -35,23 +35,16 @@ def inserirUsuario ():
                                       database="postgres")
 
         cursor = connection.cursor()
-        comando = """ Insert into cliente (cpf_espera, nome, rua, numero, cep, cidade, estado, telefone) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
-        cpf = int(input(print("Digite o cpf: ")))
-        nome = input(print("Digite o nome: "))
-        rua = input(print("Digite a rua: "))
-        numero = int(input(print("Digite o numero: ")))
-        cep = int(input(print("Digite o CEP: ")))
-        cidade = input(print("Digite o cidade: "))
-        estado = input(print("Digite o estado: "))
-        telefone = int(input(print("Número de telefone: ")))
+        comando = """ Insert into cliente (cpf, nome, rua, numero, cep, cidade, estado, telefone) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+
         cursor.execute(comando, (cpf, nome, rua, numero, cep, cidade, estado, telefone,))
         connection.commit()
         print("\nUsuário cadastrado\n ")
 
-    except (Exception, psycopg2.Error) as error:
-        print("Erro ao inserir usuário ", error)
+    except (Exception):
+        print("Erro ao inserir usuário")
 
-2
+
 
 #ver clientes da fila de espera
 def verFila():
@@ -64,7 +57,7 @@ def verFila():
 
 
         cursor.execute(" SELECT * FROM listaDeEspera");
-        print("     CPF      NOME     RUA   NUMERO   CEP    CIDADE   ESTADO  TELEFONE")
+        print("     CPF                    NOME                           RUA                NUMERO    CEP    CIDADE   ESTADO   TELEFONE")
         consulta = cursor.fetchall()
         print(consulta)
 
@@ -103,42 +96,59 @@ def validarExcluir():
         deletarCliente(digite)
 
     except (Exception):
-
         print("Erro na operação. Caractere inválido ")
 
 
-                                                        ###opcao do usuario###
-opcao = 0
-while opcao != 1:
-    menu()
-    escolha = int(input("--> "))
-
-
-    #aqui um novo usuário é inserido
-    if escolha == 1:
-        inserirUsuario()
-
-
-    #visualizar a fila de espera
-    elif escolha == 2:
-        ## tira de uma tabela e joga na outra --> INSERT INTO cliente SELECT * FROM listaDeEspera;
-        verFila()
-        input("\nPressione ENTER para sair ")
-
-    #excluir um cliente
-    elif escolha == 3:
-        validarExcluir()
-
-    #caso o usuário insira uma opção inválida
-    else:
-        print("Ops opção inválida. ")
-
-    #variável que armazena a escolha do usuário
-    opcao = int(input("1-sair\n2-voltar ao menu inicial\n"))
 
 
 
 
+                                                       ###opcao do usuario###
+try:
+    opcao = 0
+    while opcao <= 2:
+        menu()
+        escolha = int(input("--> "))
+
+
+        #aqui um novo usuário é inserido
+        if escolha == 1:
+            try:
+                cpf = int(input(print("Digite o CPF: ")))
+                nome = input(print("Digite o nome: "))
+                rua = input(print("Digite a rua: "))
+                numero = int(input(print("Digite o numero: ")))
+                cep = int(input(print("Digite o CEP: ")))
+                cidade = input(print("Digite o cidade: "))
+                estado = input(print("Digite o estado: "))
+                telefone = int(input(print("Número de telefone: ")))
+
+                inserirUsuario(cpf, nome, rua, numero, cep, cidade, estado, telefone,)
+            except (Exception):
+                print("Ops, Caractere inválido ")
+
+
+        #visualizar a fila de espera
+        elif escolha == 2:
+            ## tira de uma tabela e joga na outra --> INSERT INTO cliente SELECT * FROM listaDeEspera;
+            verFila()
+            input("\nPressione ENTER para sair ")
+
+        #excluir um cliente
+        elif escolha == 3:
+            validarExcluir()
+
+        #caso o usuário insira uma opção inválida
+        else:
+            print("Ops opção inválida. ")
+
+        #variável que armazena a escolha do usuário
+        opcao = int(input("1-sair\n2-voltar ao menu inicial\n"))
+
+except(Exception):
+    print("Ops opção inválida, tente novamente ")
+
+1
 
 
 
