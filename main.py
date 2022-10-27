@@ -27,22 +27,40 @@ def menu():
 
 
 #inserção de um novo usuário
-def inserirUsuario (cpf, nome, rua, numero, cep, cidade, estado, telefone,):
-    try:
-        connection = psycopg2.connect(user="postgres",
-                                      password="postgres",
-                                      host="LocalHost",
-                                      database="postgres")
+def inserirUsuario ():
+        try:
+            connection = psycopg2.connect(user="postgres",
+                                          password="postgres",
+                                          host="LocalHost",
+                                          database="postgres")
 
-        cursor = connection.cursor()
-        comando = """ Insert into cliente (cpf, nome, rua, numero, cep, cidade, estado, telefone) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+            cursor = connection.cursor()
+            comando = """ Insert into cliente (cpf, nome, rua, numero, cep, cidade, estado, telefone) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
 
-        cursor.execute(comando, (cpf, nome, rua, numero, cep, cidade, estado, telefone,))
-        connection.commit()
-        print("\nUsuário cadastrado\n ")
+            try:
+                cpf = int(input(print("Digite o CPF (obrigatório e somente numeros): ")))
+                nome = input(print("Digite o nome: "))
+                rua = input(print("Digite a rua: "))
+                numero = int(input(print("Digite o numero: ")))
+                cep = int(input(print("Digite o CEP: ")))
+                cidade = input(print("Digite o cidade: "))
+                estado = input(print("Digite o estado: "))
+                telefone = int(input(print("Número de telefone: ")))
+                cursor.execute(comando, (cpf, nome, rua, numero, cep, cidade, estado, telefone,))
+                connection.commit()
+                print("\nUsuário cadastrado\n ")
 
-    except (Exception):
-        print("Erro ao inserir usuário")
+            except(Exception):
+                print("Caractere inválido, tente novamente ")
+
+        except(Exception, psycopg2.Error) as error:
+            print("Erro na inserir usuário", error)
+
+
+
+
+
+
 
 
 
@@ -104,51 +122,40 @@ def validarExcluir():
 
 
                                                        ###opcao do usuario###
-try:
-    opcao = 0
-    while opcao <= 2:
-        menu()
-        escolha = int(input("--> "))
+
+opcao = 0
+while opcao <= 2:
+    menu()
+    escolha = int(input("--> "))
 
 
-        #aqui um novo usuário é inserido
-        if escolha == 1:
-            try:
-                cpf = int(input(print("Digite o CPF: ")))
-                nome = input(print("Digite o nome: "))
-                rua = input(print("Digite a rua: "))
-                numero = int(input(print("Digite o numero: ")))
-                cep = int(input(print("Digite o CEP: ")))
-                cidade = input(print("Digite o cidade: "))
-                estado = input(print("Digite o estado: "))
-                telefone = int(input(print("Número de telefone: ")))
+    #aqui um novo usuário é inserido
+    if escolha == 1:
 
-                inserirUsuario(cpf, nome, rua, numero, cep, cidade, estado, telefone,)
-            except (Exception):
-                print("Ops, Caractere inválido ")
+            inserirUsuario()
 
 
-        #visualizar a fila de espera
-        elif escolha == 2:
-            ## tira de uma tabela e joga na outra --> INSERT INTO cliente SELECT * FROM listaDeEspera;
-            verFila()
-            input("\nPressione ENTER para sair ")
 
-        #excluir um cliente
-        elif escolha == 3:
-            validarExcluir()
+    #visualizar a fila de espera
+    elif escolha == 2:
+        ## tira de uma tabela e joga na outra --> INSERT INTO cliente SELECT * FROM listaDeEspera;
+        verFila()
+        input("\nPressione ENTER para sair ")
 
-        #caso o usuário insira uma opção inválida
-        else:
-            print("Ops opção inválida. ")
+    #excluir um cliente
+    elif escolha == 3:
+        validarExcluir()
 
-        #variável que armazena a escolha do usuário
-        opcao = int(input("1-sair\n2-voltar ao menu inicial\n"))
+    #caso o usuário insira uma opção inválida
+    else:
+        print("Ops opção inválida. ")
 
-except(Exception):
-    print("Ops opção inválida, tente novamente ")
+    #variável que armazena a escolha do usuário
+    opcao = int(input("1-sair\n2-voltar ao menu inicial\n"))
 
-1
+
+
+
 
 
 
