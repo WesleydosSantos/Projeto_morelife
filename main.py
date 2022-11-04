@@ -63,7 +63,6 @@ def inserirUsuario ():
 
 
 
-
 #ver clientes da fila de espera
 def verFila():
     try:
