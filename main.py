@@ -11,7 +11,7 @@ import datetime
 
 #Biblioteca para realizar a conexão com o Postgres
 import psycopg2
-from datetime import time
+
 
 
 
@@ -35,10 +35,10 @@ def cadastrarMedico():
                                       database="postgres")
 
         cursor = connection.cursor()
-        comando = """ Insert into medico (cpf, nome, rua, numero, cep, cidade, estado, telefone, crm, especialidade) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        comando = """ Insert into medico (cpf_medico, nome, rua, numero, cep, cidade, estado, telefone, crm, especialidade) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
         try:
-            cpf = int(input(print("Digite o CPF (obrigatório e somente numeros): ")))
+            cpf_medico = int(input(print("Digite o CPF (obrigatório e somente numeros): ")))
             nome = input(print("Digite o nome: "))
             rua = input(print("Digite a rua: "))
             numero = int(input(print("Digite o numero: ")))
@@ -49,7 +49,7 @@ def cadastrarMedico():
             crm = int(input(print("CRM: ")))
             especialidade = input(print("Especialidade: "))
 
-            cursor.execute(comando, (cpf, nome, rua, numero, cep, cidade, estado, telefone,crm, especialidade,))
+            cursor.execute(comando, (cpf_medico, nome, rua, numero, cep, cidade, estado, telefone,crm, especialidade,))
             connection.commit()
             print("\nMédico cadastrado\n ")
 
@@ -68,11 +68,11 @@ def excluirMedico():
 
         cursor = connection.cursor()
 
-        cpf = int(input("Digite o CPF > "))
+        cpf_medico = int(input("Digite o CPF > "))
 
         # Apagando uma tupla pelo CPF
-        sql_delete_query = """Delete from medico where cpf = %s"""
-        cursor.execute(sql_delete_query, (cpf,))
+        sql_delete_query = """Delete from medico where cpf_medico = %s"""
+        cursor.execute(sql_delete_query, (cpf_medico,))
         connection.commit()
         count = cursor.rowcount
         print(count, "medico deletado\n ")
@@ -187,6 +187,8 @@ def validarExcluir():
     except (Exception):
         print("Erro na operação. Caractere inválido ")
 
+
+
 def cadastrarConsulta():
     try:
         connection = psycopg2.connect(user="postgres",
@@ -198,6 +200,7 @@ def cadastrarConsulta():
         comando = """ Insert into consulta (data,hora, cpf_medico, cpf_paciente, descricao) VALUES (%s,%s,%s,%s,%s)"""
 
         try:
+
             print("Digite a data no formato YYYY-MM-DD ")
 
             ano = int(input("Ano: "))
@@ -219,8 +222,8 @@ def cadastrarConsulta():
             connection.commit()
             print("\nConsulta cadastrada\n ")
 
-        except(Exception, psycopg2.Error) as error:
-            print("Erro ", error)
+        except(Exception):
+            print("Ops, médico e/ou paciente não existe ")
 
     except(Exception, psycopg2.Error) as error:
         print("Erro ", error)
@@ -233,28 +236,87 @@ def menuUsuario():
 def menuMedico():
     print("\n --- SISTEMA MORELIFE ---")
     print("         [Médico]    ")
-    print(" 1 - Consultar lista de espera\n 2 - Cadastrar consulta\n 2 - Gerar receita\n 4 - Fazer prontuário ")
+    print(" 1 - Gerar receita\n 2 - Fazer prontuário ")
+
+def gerarReceita():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="LocalHost",
+                                      database="postgres")
+
+        cursor = connection.cursor()
+
+        comando = """ Insert into receita ( codigo_remedio, nome_remedio) VALUES (%s,%s) """
+        codigo_remedio = int(input("Código: "))
+        nome_remedio = input("Nome: ")
+
+        cursor.execute(comando, (codigo_remedio, nome_remedio))
+        connection.commit()
+
+        print("\nReceita gerada com sucesso ")
+    except (Exception, psycopg2.Error) as error:
+        print("Erro na gerar receita", error)
 
 
-                                                       ###opcao do usuario###
+
+def gerarProntuario(cpf):
+
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="LocalHost",
+                                      database="postgres")
+
+        cursor = connection.cursor()
+
+
+        comando = """ select  nome from paciente  where cpf = (%s) """
+        cursor.execute(comando, (cpf,))
+
+        resul = cursor.fetchall()
+
+
+        print("____________________________________________________________________________________-")
+
+        print("Nome completo: ",resul)
+        print("Data de nascimento ")
+        print("Endereço ")
+        print("Telefone ")
+        print("Gravidade ")
+        print("____________________________________________________________________________________-")
+    except (Exception, psycopg2.Error) as erro:
+        print("Deu erro", erro)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ###opcao do usuario###
 
 print("*****************************************")
 print("*                                       *")
-print("*   1 - Fazer login como funcionário    *")
-print("*   2 - Fazer login como médico         *")
-print("*   3 - Fazer login como administrador  *")
+print("*   1 - Fazer login como médico         *")
+print("*   2 - Fazer login como administrador  *")
 print("*                                       *")
 print("*****************************************")
 
 alternativa = int(input(">> "))
 
 
+
+
+
 if alternativa == 2:
-    int(input("CRM: "))
-    input("Senha: ")
-
-
-if alternativa == 3:
 
     loginAdministrador()
 
@@ -299,22 +361,26 @@ if alternativa == 3:
         opcao = int(input("1- voltar ao menu inicial\n2 - sair\n>> "))
 
 elif alternativa == 1:
+    input("CRM: ")
+    input("Senha: ")
 
     escolhaUsuario = 0
 
     while escolhaUsuario != 2:
-        menuUsuario()
+        menuMedico()
         escolha = int(input(">> "))
 
         if escolha == 1:
-            verFila()
+            gerarReceita()
         elif escolha == 2:
-            cadastrarConsulta()
+
+            cpf = int(input("cpf>> "))
+            gerarProntuario(cpf)
 
         escolhaUsuario = int(input("\n1 - Voltar ao menu inicial\n2 - Sair\n>> "))
 
-elif alternativa == 2:
-    menuMedico()
+
+
 
 
 
