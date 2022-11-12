@@ -49,7 +49,7 @@ def cadastrarMedico():
             crm = int(input(print("CRM: ")))
             especialidade = input(print("Especialidade: "))
 
-            cursor.execute(comando, (cpf_medico, nome, rua, numero, cep, cidade, estado, telefone,crm, especialidade,))
+            cursor.execute(comando, (cpf_medico, nome, rua, numero, cep, cidade, estado, telefone, crm, especialidade,))
             connection.commit()
             print("\nMédico cadastrado\n ")
 
@@ -146,9 +146,20 @@ def verFila():
 
 
         cursor.execute(" SELECT * FROM listaDeEspera");
-        print("     CPF                    NOME                           RUA                NUMERO    CEP    CIDADE   ESTADO   TELEFONE")
+
         consulta = cursor.fetchall()
-        print(consulta)
+
+        for row in consulta:
+            print("CPF: ", row[0])
+            print("Nome: ", row[1])
+            print("Rua: ", row[2])
+            print("Numero: ", row[3])
+            print("CEP: ", row[4])
+            print("Cidade: ", row[5])
+            print("Estado: ", row[6])
+            print("Telefone: ", row[7])
+            print("\n")
+
 
     except (Exception, psycopg2.Error) as error:
         print("Erro ao ver paciente da fila de espera ", error)
@@ -271,20 +282,34 @@ def gerarProntuario(cpf):
         cursor = connection.cursor()
 
 
-        comando = """ select  nome from paciente  where cpf = (%s) """
+        comando = """ select  nome, rua, numero, cep, cidade, estado, telefone, status_gravidade from paciente  where cpf = (%s) """
         cursor.execute(comando, (cpf,))
 
-        resul = cursor.fetchall()
 
 
-        print("____________________________________________________________________________________-")
 
-        print("Nome completo: ",resul)
-        print("Data de nascimento ")
-        print("Endereço ")
-        print("Telefone ")
-        print("Gravidade ")
-        print("____________________________________________________________________________________-")
+
+        result = cursor.fetchall()
+
+        for row in result:
+            print("---------------SISTEMA MORELIFE-------------------")
+            print("Nome completo:  ", row[0])
+            print("Endereço: ")
+            print(" Rua: ", row[1])
+            print(" Numero: ", row[2])
+            print(" CEP: ", row[3])
+            print(" Cidade: ", row[4])
+            print(" Estado: ", row[5])
+            print("Tele fone: ", row[6])
+            print("Gravidade: ", row[7])
+
+            print("--------------------------------------------------")
+            print("\n")
+
+
+
+
+
     except (Exception, psycopg2.Error) as erro:
         print("Deu erro", erro)
 
