@@ -38,16 +38,19 @@ def cadastrarMedico():
         comando = """ Insert into medico (cpf_medico, nome, rua, numero, cep, cidade, estado, telefone, crm, especialidade) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
         try:
-            cpf_medico = int(input(print("Digite o CPF (obrigatório e somente numeros): ")))
-            nome = input(print("Digite o nome: "))
+
+
+
+            cpf_medico = int(input("Digite o CPF (obrigatório e somente numeros): "))
+            nome = input("Digite o nome: ")
             rua = input(print("Digite a rua: "))
-            numero = int(input(print("Digite o numero: ")))
-            cep = int(input(print("Digite o CEP: ")))
-            cidade = input(print("Digite o cidade: "))
-            estado = input(print("Digite o estado: "))
-            telefone = int(input(print("Número de telefone: ")))
-            crm = int(input(print("CRM: ")))
-            especialidade = input(print("Especialidade: "))
+            numero = int(input("Digite o numero: "))
+            cep = int(input("Digite o CEP: "))
+            cidade = input("Digite o cidade: ")
+            estado = input("Digite o estado: ")
+            telefone = int(input("Número de telefone: "))
+            crm = int(input("CRM: "))
+            especialidade = input("Especialidade: ")
 
             cursor.execute(comando, (cpf_medico, nome, rua, numero, cep, cidade, estado, telefone, crm, especialidade,))
             connection.commit()
@@ -57,7 +60,7 @@ def cadastrarMedico():
             print("Caractere inválido, tente novamente ")
 
     except(Exception, psycopg2.Error) as error:
-        print("Erro na inserir usuário", error)
+        print("Erro na conexão", error)
 
 def excluirMedico():
     try:
@@ -86,13 +89,12 @@ def excluirMedico():
 def menuAdministrador():
     print("\n --- SISTEMA MORELIFE ---")
     print("     [Administrador]    ")
-    print("Digite oque fazer:  \n 1 - Cadastrar novo paciente\n 2 - Consultar pacientes da lista de espera\n 3 - Excluir paciente\n 4 - Cadastratar médico\n 5 - Excluir médico\n 6 - Cadastrar consulta "
-          "")
+    print("Digite oque fazer:  \n 1 - Consultar paciente da lista de espera\n 2 - Cadastrar novo paciente\n 3 - Atualizar dados de um paciente\n 4 - Excluir paciente\n 5 - Cadastratar médico\n 6 - Atualizar dados de um médico\n 7 - Excluir médico\n 8 - Cadastrar consulta """)
 
 
 
 #inserção de um novo usuário
-def inserirUsuario ():
+def cadastrarPaciente ():
         try:
             connection = psycopg2.connect(user="postgres",
                                           password="postgres",
@@ -103,22 +105,22 @@ def inserirUsuario ():
             comando = """ Insert into paciente (cpf, nome, rua, numero, cep, cidade, estado, telefone,status_gravidade,status_tempo_espera) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
             try:
-                cpf = int(input(print("Digite o CPF (obrigatório e somente numeros): ")))
-                nome = input(print("Digite o nome: "))
-                rua = input(print("Digite a rua: "))
-                numero = int(input(print("Digite o numero: ")))
-                cep = int(input(print("Digite o CEP: ")))
-                cidade = input(print("Digite o cidade: "))
-                estado = input(print("Digite o estado: "))
-                telefone = int(input(print("Número de telefone: ")))
+                cpf = int(input("Digite o CPF (obrigatório e somente numeros): "))
+                nome = input("Digite o nome: ")
+                rua = input("Digite a rua: ")
+                numero = int(input("Digite o numero: "))
+                cep = int(input("Digite o CEP: "))
+                cidade = input("Digite o cidade: ")
+                estado = input("Digite o estado: ")
+                telefone = int(input("Número de telefone: "))
                 status_gravidade = input("Estatus de gravidade: ")
 
                 print("Status tempo de espera: ")
                 hora = int(input("Hora: "))
                 minuto = int(input("Minutos: "))
-                status_tempo_espera = datetime.time(hora,minuto)
+                status_tempo_espera = datetime.time(hora, minuto)
 
-                cursor.execute(comando, (cpf, nome, rua, numero, cep, cidade, estado, telefone,status_gravidade,status_tempo_espera,))
+                cursor.execute(comando, (cpf, nome, rua, numero, cep, cidade, estado, telefone,status_gravidade, status_tempo_espera,))
                 connection.commit()
                 print("\nPaciente cadastrado\n ")
 
@@ -126,7 +128,7 @@ def inserirUsuario ():
                 print("Erro na inserir paciente", error)
 
         except(Exception, psycopg2.Error) as error:
-            print("Erro na inserir paciente", error)
+            print("Erro na conexão", error)
 
 
 
@@ -239,10 +241,7 @@ def cadastrarConsulta():
     except(Exception, psycopg2.Error) as error:
         print("Erro ", error)
 
-def menuUsuario():
-    print("\n --- SISTEMA MORELIFE ---")
-    print("       [Funcionário]    ")
-    print(" 1 - Consultar lista de espera\n 2 - Cadastrar consulta\n 2 - Gerar receita\n 4 - Fazer prontuário ")
+
 
 def menuMedico():
     print("\n --- SISTEMA MORELIFE ---")
@@ -258,16 +257,18 @@ def gerarReceita():
 
         cursor = connection.cursor()
 
-        comando = """ Insert into receita ( codigo_remedio, nome_remedio) VALUES (%s,%s) """
-        codigo_remedio = int(input("Código: "))
+        comando = """ Insert into receita_paciente ( nome_remedio, cod_remedio, cod_paciente ) VALUES (%s,%s ,%s) """
+        codigo_remedio = int(input("Código do medicamento: "))
         nome_remedio = input("Nome: ")
+        cod_paciente = int(input("CPF: "))
 
-        cursor.execute(comando, (codigo_remedio, nome_remedio))
+
+        cursor.execute(comando, (nome_remedio, codigo_remedio, cod_paciente,))
         connection.commit()
 
         print("\nReceita gerada com sucesso ")
     except (Exception, psycopg2.Error) as error:
-        print("Erro na gerar receita", error)
+        print("Erro ao gerar receita", error)
 
 
 
@@ -282,14 +283,11 @@ def gerarProntuario(cpf):
         cursor = connection.cursor()
 
 
-        comando = """ select  nome, rua, numero, cep, cidade, estado, telefone, status_gravidade from paciente  where cpf = (%s) """
+        comando = """ select  p.nome, p.rua, p.numero, p.cep, p.cidade, p.estado, p.telefone, p.status_gravidade, rp.cod_remedio, rp.nome_remedio from paciente as p, receita_paciente as rp  where p.cpf = (%s) and rp.cod_paciente = p.cpf """
         cursor.execute(comando, (cpf,))
 
-
-
-
-
         result = cursor.fetchall()
+
 
         for row in result:
             print("---------------SISTEMA MORELIFE-------------------")
@@ -302,16 +300,208 @@ def gerarProntuario(cpf):
             print(" Estado: ", row[5])
             print("Tele fone: ", row[6])
             print("Gravidade: ", row[7])
-
+            print("Código medicamento: ", row[8])
+            print("Nome Medicamento: ", row[9])
             print("--------------------------------------------------")
             print("\n")
 
-
-
-
-
     except (Exception, psycopg2.Error) as erro:
-        print("Deu erro", erro)
+        print("Deu ao gerar prontuário ", erro)
+
+
+def atualizarMedico():
+    try:
+        connection = psycopg2.connect(user="postgres",
+                                      password="postgres",
+                                      host="LocalHost",
+                                      database="postgres")
+
+        cursor = connection.cursor()
+
+        pensou = int(input("Inform oque deseja atualizar: \n1 - Nome\n2- Rua\n3- Número\n4 - CEP\n5 - Cidade\n6 - Estado\n7 - Telefone\n8 - CRM\n9 - Especialidade\n>> "))
+
+        if pensou == 1:
+            comando = """ update medico set nome = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            nome = input("Novo nome: ")
+            cursor.execute(comando, (nome, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+
+        elif pensou == 2:
+            comando = """ update medico set rua = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            rua = input("Nova rua: ")
+            cursor.execute(comando, (rua, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+
+        elif pensou == 3:
+            comando = """ update medico set numero = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            numero = input("Novo número: ")
+            cursor.execute(comando, (numero, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+
+        elif pensou == 4:
+            comando = """ update medico set cep = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            cep = input("Novo CEP: ")
+            cursor.execute(comando, (cep, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+
+        elif pensou == 5:
+            comando = """ update medico set cidade = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            cidade = input("Nova cidade: ")
+            cursor.execute(comando, (cidade, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+
+        elif pensou == 6:
+            comando = """ update medico set estado = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            estado = input("Novo estado: ")
+            cursor.execute(comando, (estado, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+
+        elif pensou == 7:
+            comando = """ update medico set telefone = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            telefone = input("Novo telefone: ")
+            cursor.execute(comando, (telefone, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+
+        elif pensou == 8:
+            comando = """ update medico set crm = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            crm = input("Novo CRM: ")
+            cursor.execute(comando, (crm, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+
+        elif pensou == 9:
+            comando = """ update medico set especialidade = %s where cpf_medico = %s """
+
+            cpf_medico = int(input("Informe o CPF do médico a ser atualizado: "))
+            especialidade = input("Nova especialidade: ")
+            cursor.execute(comando, (especialidade, cpf_medico,))
+            connection.commit()
+            print("Atualizado com sucesso")
+        else:
+            print("Ops opção inválida ")
+
+
+    except( Exception ):
+        print("Erro ao atualizar dados ")
+
+def atualizarPaciente():
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host="LocalHost",
+                                  database="postgres")
+
+    cursor = connection.cursor()
+    pensou = int(input("Informe oque deseja atualizar: \n1 - Nome\n2- Rua\n3- Número\n4 - CEP\n5 - Cidade\n6 - Estado\n7 - Telefone\n8 - Status de gravidade\n9 - Status do tempo de espera\n>> "))
+
+    if pensou == 1:
+        comando = """ update paciente set nome = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+        nome = input("Novo nome: ")
+        cursor.execute(comando, (nome, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+
+    elif pensou == 2:
+        comando = """ update paciente set rua = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+        rua = input("Nova rua: ")
+        cursor.execute(comando, (rua, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+
+    elif pensou == 3:
+        comando = """ update paciente set numero = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+        numero = input("Novo número: ")
+        cursor.execute(comando, (numero, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+
+    elif pensou == 4:
+        comando = """ update paciente set cep = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+        cep = input("Novo CEP: ")
+        cursor.execute(comando, (cep, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+
+    elif pensou == 5:
+        comando = """ update paciente set cidade = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+        cidade = input("Nova cidade: ")
+        cursor.execute(comando, (cidade, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+
+    elif pensou == 6:
+        comando = """ update paciente set estado = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+        estado = input("Novo estado: ")
+        cursor.execute(comando, (estado, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+
+    elif pensou == 7:
+        comando = """ update paciente set telefone = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+        telefone = input("Novo telefone: ")
+        cursor.execute(comando, (telefone, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+
+    elif pensou == 8:
+        comando = """ update paciente set status_gravidade = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+        status_gravidade = input("Novo Status de gravidade: ")
+        cursor.execute(comando, (status_gravidade, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+
+    elif pensou == 9:
+        comando = """ update paciente set status_tempo_espera = %s where cpf = %s """
+
+        cpf_medico = int(input("Informe o CPF do paciente a ser atualizado: "))
+
+        horaGrande = int(input("Digite a nova hora: "))
+        minuto = int(input("Minuto/s: "))
+        status_tempo_espera = datetime.time(horaGrande, minuto)
+
+        cursor.execute(comando, (status_tempo_espera, cpf_medico,))
+        connection.commit()
+        print("Atualizado com sucesso")
+    else:
+        print("Ops opção inválida ")
 
 
 
@@ -326,7 +516,7 @@ def gerarProntuario(cpf):
 
 
 
-    ###opcao do usuario###
+                  ###opcao do usuario###
 
 print("*****************************************")
 print("*                                       *")
@@ -351,31 +541,33 @@ if alternativa == 2:
         escolha = int(input("--> "))
 
 
-        #aqui um novo usuário é inserido
+
         if escolha == 1:
-
-                inserirUsuario()
-
-
-
-        #visualizar a fila de espera
-        elif escolha == 2:
-            ## tira de uma tabela e joga na outra --> INSERT INTO cliente SELECT * FROM listaDeEspera;
             verFila()
             input("\nPressione ENTER para sair ")
 
-        #excluir um cliente
+
+        elif escolha == 2:
+            cadastrarPaciente()
+
+
         elif escolha == 3:
+            atualizarPaciente()
+
+
+        elif escolha == 4:
             validarExcluir()
 
-        #cadastra medico
-        elif escolha ==4:
+        elif escolha == 5:
             cadastrarMedico()
 
-        elif escolha ==5:
+        elif escolha == 6:
+            atualizarMedico()
+
+        elif escolha == 7:
             excluirMedico()
 
-        elif escolha ==6:
+        elif escolha == 8:
             cadastrarConsulta()
 
         #caso o usuário insira uma opção inválida
@@ -383,7 +575,7 @@ if alternativa == 2:
             print("Ops opção inválida. ")
 
         #variável que armazena a escolha do usuário
-        opcao = int(input("1- voltar ao menu inicial\n2 - sair\n>> "))
+        opcao = int(input("1 - voltar ao menu inicial\n2 - sair\n>> "))
 
 elif alternativa == 1:
     input("CRM: ")
@@ -398,9 +590,9 @@ elif alternativa == 1:
         if escolha == 1:
             gerarReceita()
         elif escolha == 2:
-
             cpf = int(input("cpf>> "))
             gerarProntuario(cpf)
+        
 
         escolhaUsuario = int(input("\n1 - Voltar ao menu inicial\n2 - Sair\n>> "))
 
