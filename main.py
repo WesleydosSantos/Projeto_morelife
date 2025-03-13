@@ -742,18 +742,3 @@ try:
         print("Ops, opção inválida ❌")
 except(Exception):
     print("Ops, caractere inválido ❌\ntente novamente")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
